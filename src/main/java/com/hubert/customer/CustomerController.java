@@ -4,11 +4,11 @@ import com.hubert.jwt.JWTUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
 @RequestMapping("api/v1/customers")
 public class CustomerController {
 
@@ -18,6 +18,11 @@ public class CustomerController {
     public CustomerController(CustomerService customerService, JWTUtil jwtUtil) {
         this.customerService = customerService;
         this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.fetchAllCustomers();
     }
 
     @PostMapping

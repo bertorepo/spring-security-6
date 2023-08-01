@@ -1,11 +1,12 @@
 package com.hubert.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.sql.Date;
+import java.util.Date;
 import java.time.Instant;
 import java.util.Map;
 
@@ -40,6 +41,29 @@ public class JWTUtil {
 
         return token;
 
+    }
+
+    public String getSubject(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public Claims getClaims(String token) {
+        Claims claims = Jwts
+                .parserBuilder()
+                .setSigningKey(getSigninKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims;
+    }
+
+    public boolean isTokenValid(String token, String username) {
+      return getSubject(token).equals(username) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getClaims(token).getExpiration().before(Date.from(Instant.now()));
     }
 
     private Key getSigninKey() {
