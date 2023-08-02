@@ -34,5 +34,10 @@ public class CustomerDaoImpl implements CustomerDao{
         return customerRepository.findCustomerByUsername(username);
     }
 
+    @Override
+    public Optional<Customer> getCustomer(Integer customerId) {
+        return customerRepository.findById(customerId);
+    }
+
 
 }

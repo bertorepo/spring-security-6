@@ -1,10 +1,12 @@
 package com.hubert.customer;
 
 import com.hubert.exception.ResourceDuplicateException;
+import com.hubert.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +23,7 @@ public class CustomerService {
         this.customerDTOMapper = customerDTOMapper;
     }
 
-    public List<CustomerDTO>  fetchAllCustomers() {
+    public List<CustomerDTO> fetchAllCustomers() {
         return customerDao.getAllCustomers()
                 .stream()
                 .map(customerDTOMapper)
@@ -31,7 +33,7 @@ public class CustomerService {
     public void addCustomer(CustomerRegistrationRequest customerRegistrationRequest) {
         String email = customerRegistrationRequest.email();
 
-        if(customerDao.checkIfCustomerEmailExist(email)) {
+        if (customerDao.checkIfCustomerEmailExist(email)) {
             throw new ResourceDuplicateException("Email already taken!");
         }
 
@@ -39,8 +41,14 @@ public class CustomerService {
                 customerRegistrationRequest.username(),
                 customerRegistrationRequest.email(),
                 passwordEncoder.encode(customerRegistrationRequest.password())
-                );
+        );
 
         customerDao.addCustomer(customer);
+    }
+
+    public CustomerDTO findCustomerById(Integer customerId) {
+        return customerDao.getCustomer(customerId)
+                .map(customerDTOMapper)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer with id %s not found!".formatted(customerId)));
     }
 }

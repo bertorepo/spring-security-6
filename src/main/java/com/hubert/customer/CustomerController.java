@@ -25,6 +25,11 @@ public class CustomerController {
         return customerService.fetchAllCustomers();
     }
 
+    @GetMapping("{customerId}")
+    public CustomerDTO getCustomer(@PathVariable("customerId") Integer customerId) {
+        return customerService.findCustomerById(customerId);
+    }
+
     @PostMapping
     public ResponseEntity<?> register(@RequestBody CustomerRegistrationRequest customerRegistrationRequest) {
         customerService.addCustomer(customerRegistrationRequest);
